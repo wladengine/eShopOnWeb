@@ -20,8 +20,8 @@
 name: Build and deploy Web to Azure
 
 env:
-  AZURE_WEBAPP_NAME: eshop-001              # set this to the name of your Azure Web App
-  AZURE_WEBAPP_NAME_WESTEU: 'eshop-westeu'
+  AZURE_WEBAPP_NAME_NORTHEU: 'eshop-eu-north' # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME_WESTEU: 'eshop-eu-west'
   AZURE_WEBAPP_PACKAGE_PATH: '.'            # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '8.0.x'                   # set this to the .NET Core version to use
 
@@ -84,8 +84,8 @@ jobs:
         id: deploy-to-webapp-northeu
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          app-name: ${{ env.AZURE_WEBAPP_NAME_NORTHEU }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_NORTHEU }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
           
       - name: Deploy to Azure Web App (West EU)
