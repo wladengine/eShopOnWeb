@@ -17,11 +17,10 @@
 # For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
 
-name: Build and deploy Web to Azure
+name: Build and deploy Public Api to Azure
 
 env:
-  AZURE_WEBAPP_NAME: eshop-001              # set this to the name of your Azure Web App
-  AZURE_WEBAPP_NAME_WESTEU: 'eshop-westeu'
+  AZURE_WEBAPP_NAME: public-api-001         # set this to the name of your Azure Web App
   AZURE_WEBAPP_PACKAGE_PATH: '.'            # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '8.0.x'                   # set this to the .NET Core version to use
 
@@ -54,16 +53,16 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build with dotnet
-        run: dotnet build ./src/Web/Web.csproj --configuration Release
+        run: dotnet build ./src/PublicApi/PublicApi.csproj --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./src/Web/Web.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./src/PublicApi/PublicApi.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp_publicapi
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: .net-app-public-api
+          path: ${{env.DOTNET_ROOT}}/myapp_publicapi
 
   deploy:
     permissions:
@@ -78,20 +77,12 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: .net-app
+          name: .net-app-public-api
 
-      - name: Deploy to Azure Web App (North EU)
-        id: deploy-to-webapp-northeu
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-          
-      - name: Deploy to Azure Web App (West EU)
-        id: deploy-to-webapp-westeu
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME_WESTEU }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_WESTEU }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PUBLIC_API }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
