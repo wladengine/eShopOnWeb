@@ -25,6 +25,9 @@ using MinimalApi.Endpoint.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// The following line enables Application Insights telemetry collection.
+builder.Services.AddApplicationInsightsTelemetry();
+
 builder.Services.AddEndpoints();
 
 // Use to force loading of appsettings.json of test project
