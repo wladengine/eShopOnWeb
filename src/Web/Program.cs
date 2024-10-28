@@ -22,6 +22,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddConsole();
 
+builder.Services.AddApplicationInsightsTelemetry();
+
 if (builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Docker"){
     // Configure SQL Server (local)
     Microsoft.eShopWeb.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
