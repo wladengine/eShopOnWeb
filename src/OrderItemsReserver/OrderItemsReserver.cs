@@ -1,10 +1,10 @@
-using System.Net;
+﻿using System.Net;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.eShopWeb.ApplicationCore.Entities.OrderAggregate;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Shop.Functions.Dto;
 
 namespace Shop.Functions;
 
@@ -30,9 +30,10 @@ public class OrderItemsReserver
         string blobName = await DumpOrderToBlobStorage(order);
 
         var response = req.CreateResponse(HttpStatusCode.OK);
+
         response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
-        response.WriteString($"Order data was successfully written to {blobName}!");
+        await response.WriteStringAsync($"Order data was successfully written to {blobName}!");
 
         return response;
     }
@@ -56,12 +57,16 @@ public class OrderItemsReserver
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_storageConfig.FileContainerName);
 
         // Get the Blob Client used to interact with (including create) the blob
-        string blobName = $"{order.Id}.json";
+        string blobName = $"{order.Id}_{order.OrderDate.ToUnixTimeSeconds()}.json";
+
         BlobClient blobClient = containerClient.GetBlobClient(blobName);
+        
+        blobClient.DeleteIfExists();
 
         // Upload the blob
         using var fileStream = new MemoryStream();
         await JsonHelper.SerializeAsync(fileStream, orderData);
+        fileStream.Position = 0;
         await blobClient.UploadAsync(fileStream);
 
         return blobName;

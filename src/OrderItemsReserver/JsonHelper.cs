@@ -10,6 +10,7 @@ public static class JsonHelper
         PropertyNameCaseInsensitive = true,
         AllowTrailingCommas = true,
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        IncludeFields = true
     };
 
     internal static async ValueTask<T> DeserializeRequestAsync<T>(HttpRequestData req)
