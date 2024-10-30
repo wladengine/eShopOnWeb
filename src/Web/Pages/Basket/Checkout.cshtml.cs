@@ -28,14 +28,14 @@ public class CheckoutModel : PageModel
         SignInManager<ApplicationUser> signInManager,
         IOrderService orderService,
         IAppLogger<CheckoutModel> logger,
-        HttpClient httpClient)
+        IHttpClientFactory httpClientFactory)
     {
         _basketService = basketService;
         _signInManager = signInManager;
         _orderService = orderService;
         _basketViewModelService = basketViewModelService;
         _logger = logger;
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient("FunctionAppClient");
     }
 
     public BasketViewModel BasketModel { get; set; } = new BasketViewModel();

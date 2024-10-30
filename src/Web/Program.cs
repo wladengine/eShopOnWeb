@@ -17,6 +17,7 @@ using Microsoft.eShopWeb.Infrastructure.Identity;
 using Microsoft.eShopWeb.Web;
 using Microsoft.eShopWeb.Web.Configuration;
 using Microsoft.eShopWeb.Web.HealthChecks;
+using Microsoft.eShopWeb.Web.Pages.Basket;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -112,6 +113,13 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<ToastService>();
 builder.Services.AddScoped<HttpService>();
 builder.Services.AddBlazorServices();
+
+// Add HttpClient for CheckoutModel
+string faUrl = builder.Configuration.GetSection($"{BaseUrlConfiguration.CONFIG_NAME}:functionApp").Value;
+builder.Services.AddHttpClient<CheckoutModel>("FunctionAppClient", httpClient =>
+{
+    httpClient.BaseAddress = new Uri($"{faUrl}/api/");
+});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
