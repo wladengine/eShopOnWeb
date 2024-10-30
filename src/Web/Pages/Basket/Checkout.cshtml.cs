@@ -1,4 +1,5 @@
-﻿using Ardalis.GuardClauses;
+﻿using System.Net.Http;
+using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,18 +21,21 @@ public class CheckoutModel : PageModel
     private string? _username = null;
     private readonly IBasketViewModelService _basketViewModelService;
     private readonly IAppLogger<CheckoutModel> _logger;
+    private readonly HttpClient _httpClient;
 
     public CheckoutModel(IBasketService basketService,
         IBasketViewModelService basketViewModelService,
         SignInManager<ApplicationUser> signInManager,
         IOrderService orderService,
-        IAppLogger<CheckoutModel> logger)
+        IAppLogger<CheckoutModel> logger,
+        IHttpClientFactory httpClientFactory)
     {
         _basketService = basketService;
         _signInManager = signInManager;
         _orderService = orderService;
         _basketViewModelService = basketViewModelService;
         _logger = logger;
+        _httpClient = httpClientFactory.CreateClient("FunctionAppClient");
     }
 
     public BasketViewModel BasketModel { get; set; } = new BasketViewModel();
@@ -54,8 +58,12 @@ public class CheckoutModel : PageModel
 
             var updateModel = items.ToDictionary(b => b.Id.ToString(), b => b.Quantity);
             await _basketService.SetQuantities(BasketModel.Id, updateModel);
-            await _orderService.CreateOrderAsync(BasketModel.Id, new Address("123 Main St.", "Kent", "OH", "United States", "44240"));
+            var order = await _orderService.CreateOrderAsync(BasketModel.Id, new Address("123 Main St.", "Kent", "OH", "United States", "44240"));
+            _logger.LogInformation(System.Text.Json.JsonSerializer.Serialize(order));
             await _basketService.DeleteBasketAsync(BasketModel.Id);
+            _logger.LogInformation("Base address: {address}", _httpClient.BaseAddress);
+            await _httpClient
+                .PostAsJsonAsync("reserve-order-items", order);
         }
         catch (EmptyBasketOnCheckoutException emptyBasketOnCheckoutException)
         {
