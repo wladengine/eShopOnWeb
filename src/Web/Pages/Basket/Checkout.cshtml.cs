@@ -62,8 +62,28 @@ public class CheckoutModel : PageModel
             _logger.LogInformation(System.Text.Json.JsonSerializer.Serialize(order));
             await _basketService.DeleteBasketAsync(BasketModel.Id);
             _logger.LogInformation("Base address: {address}", _httpClient.BaseAddress);
-            await _httpClient
-                .PostAsJsonAsync("reserve-order-items", order);
+
+            try
+            {
+                await _httpClient
+                    .PostAsJsonAsync("reserve-order-items", order);
+                _logger.LogInformation("Order reservation created");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation("Error during order reservation processing: {ex}", ex);
+            }
+
+            try
+            {
+                await _httpClient
+                    .PostAsJsonAsync("process-order-delivery", order);
+                _logger.LogInformation("Order delivery request created");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation("Error during order delivery request processing: {ex}", ex);
+            }
         }
         catch (EmptyBasketOnCheckoutException emptyBasketOnCheckoutException)
         {
