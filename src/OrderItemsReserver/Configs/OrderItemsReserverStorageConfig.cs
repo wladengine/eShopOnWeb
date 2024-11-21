@@ -1,4 +1,4 @@
-﻿namespace Shop.Functions;
+﻿namespace Shop.Functions.Configs;
 
 public class OrderItemsReserverStorageConfig
 {

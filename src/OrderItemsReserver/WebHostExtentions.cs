@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shop.Functions.Blob;
+using Shop.Functions.Configs;
 
 namespace Shop.Functions;
 public static class WebHostExtentions
@@ -18,6 +20,16 @@ public static class WebHostExtentions
             {
                 configuration.GetSection("DeliveryOrderProcessorStorageConfig").Bind(settings);
             });
+        });
+
+        return builder;
+    }
+
+    public static IHostBuilder ConfigureServices(this IHostBuilder builder)
+    {
+        builder.ConfigureServices((hostContext, services) =>
+        {
+            services.AddTransient<OrdersBlobStorageRepository>();
         });
 
         return builder;
