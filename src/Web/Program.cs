@@ -14,6 +14,8 @@ using Microsoft.eShopWeb;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.Infrastructure.Data;
 using Microsoft.eShopWeb.Infrastructure.Identity;
+using Microsoft.eShopWeb.Infrastructure.ServiceBus;
+using Microsoft.eShopWeb.Infrastructure.ServiceBus.NewOrders;
 using Microsoft.eShopWeb.Web;
 using Microsoft.eShopWeb.Web.Configuration;
 using Microsoft.eShopWeb.Web.HealthChecks;
@@ -44,6 +46,9 @@ else{
         options.UseSqlServer(connectionString, sqlOptions => sqlOptions.EnableRetryOnFailure());
     });
 }
+
+builder.Services.AddOptions<ServiceBusSettings>()
+    .Bind(builder.Configuration.GetSection(ServiceBusSettings.CONFIG_NAME));
 
 builder.Services.AddCookieSettings();
 
@@ -106,6 +111,8 @@ builder.Services.AddScoped<HttpClient>(s => new HttpClient
 {
     BaseAddress = new Uri(baseUrlConfig!.WebBase)
 });
+
+builder.Services.AddTransient<NewOrderMessageSender>();
 
 // add blazor services
 builder.Services.AddBlazoredLocalStorage();

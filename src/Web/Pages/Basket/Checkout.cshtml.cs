@@ -8,6 +8,7 @@ using Microsoft.eShopWeb.ApplicationCore.Entities.OrderAggregate;
 using Microsoft.eShopWeb.ApplicationCore.Exceptions;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.Infrastructure.Identity;
+using Microsoft.eShopWeb.Infrastructure.ServiceBus.NewOrders;
 using Microsoft.eShopWeb.Web.Interfaces;
 
 namespace Microsoft.eShopWeb.Web.Pages.Basket;
@@ -21,6 +22,7 @@ public class CheckoutModel : PageModel
     private string? _username = null;
     private readonly IBasketViewModelService _basketViewModelService;
     private readonly IAppLogger<CheckoutModel> _logger;
+    private readonly NewOrderMessageSender _newOrderMessageSender;
     private readonly HttpClient _httpClient;
 
     public CheckoutModel(IBasketService basketService,
@@ -28,13 +30,15 @@ public class CheckoutModel : PageModel
         SignInManager<ApplicationUser> signInManager,
         IOrderService orderService,
         IAppLogger<CheckoutModel> logger,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        NewOrderMessageSender newOrderMessageSender)
     {
         _basketService = basketService;
         _signInManager = signInManager;
         _orderService = orderService;
         _basketViewModelService = basketViewModelService;
         _logger = logger;
+        _newOrderMessageSender = newOrderMessageSender;
         _httpClient = httpClientFactory.CreateClient("FunctionAppClient");
     }
 
@@ -72,6 +76,15 @@ public class CheckoutModel : PageModel
             catch (Exception ex)
             {
                 _logger.LogInformation("Error during order reservation processing: {ex}", ex);
+            }
+
+            try
+            {
+                await _newOrderMessageSender.SendNewOrderMessageAsync(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation("Error during Service Bus order reservation processing: {ex}", ex);
             }
 
             try
