@@ -1,9 +1,7 @@
 ﻿using System.Net;
-using Azure.Storage.Blobs;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Shop.Functions.Blob;
 using Shop.Functions.Dto;
 

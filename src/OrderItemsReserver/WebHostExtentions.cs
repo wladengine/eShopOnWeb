@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shop.Functions.Blob;
 using Shop.Functions.Configs;
+using Shop.Functions.EventGrid;
 
 namespace Shop.Functions;
 public static class WebHostExtentions
@@ -20,6 +21,11 @@ public static class WebHostExtentions
             {
                 configuration.GetSection("DeliveryOrderProcessorStorageConfig").Bind(settings);
             });
+
+            services.AddOptions<EventGridConfig>().Configure<IConfiguration>((settings, configuration) =>
+            {
+                configuration.GetSection("EventGridConfig").Bind(settings);
+            });
         });
 
         return builder;
@@ -30,6 +36,11 @@ public static class WebHostExtentions
         builder.ConfigureServices((hostContext, services) =>
         {
             services.AddTransient<OrdersBlobStorageRepository>();
+        });
+        
+        builder.ConfigureServices((hostContext, services) =>
+        {
+            services.AddTransient<EventGridSender>();
         });
 
         return builder;
