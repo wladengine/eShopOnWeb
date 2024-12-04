@@ -60,7 +60,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.SameSite = SameSiteMode.Lax;
-    });
+    })
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
            .AddDefaultUI()
@@ -131,11 +132,6 @@ builder.Services.AddHttpClient<CheckoutModel>("FunctionAppClient", httpClient =>
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-// Sign-in users with the Microsoft identity platform
-builder.Services
-    .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 var app = builder.Build();
 
