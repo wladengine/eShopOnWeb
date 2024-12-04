@@ -59,7 +59,7 @@ public class OrderItemsReserverV2
             _logger.LogError("Failed to process the message after 3 retries. Moving to the dead letter queue.");
             await messageActions.DeadLetterMessageAsync(message);
 
-            await _gridSender.PostEventGridEventAsync(
+            _gridSender.PostEventGridEvent(
                 "orderProvisioningFail", 
                 $"Failed to create reservation in blob for order (Id = {order.Id})", 
                 order);
