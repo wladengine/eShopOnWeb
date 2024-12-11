@@ -23,6 +23,7 @@ using Microsoft.eShopWeb.Web.HealthChecks;
 using Microsoft.eShopWeb.Web.Pages.Basket;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddConsole();
