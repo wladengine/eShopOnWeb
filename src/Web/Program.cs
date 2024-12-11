@@ -76,7 +76,7 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"), cookieScheme: "MyAzureAdScheme");
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-           .AddDefaultUI()
+           //.AddDefaultUI()
            .AddEntityFrameworkStores<AppIdentityDbContext>()
                            .AddDefaultTokenProviders();
 
