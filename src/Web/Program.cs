@@ -75,10 +75,10 @@ builder.Services.AddCookieSettings();
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"), cookieScheme: "MyAzureAdScheme");
 
-//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-//           .AddDefaultUI()
-//           .AddEntityFrameworkStores<AppIdentityDbContext>()
-//                           .AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+           .AddDefaultUI()
+           .AddEntityFrameworkStores<AppIdentityDbContext>()
+                           .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimService>();
 builder.Configuration.AddEnvironmentVariables();
