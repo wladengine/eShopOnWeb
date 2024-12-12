@@ -95,12 +95,10 @@ builder.Services.AddRouting(options =>
 });
 
 builder.Services.AddMvc(options =>
-{
-    options.Conventions.Add(new RouteTokenTransformerConvention(
-             new SlugifyParameterTransformer()));
-
-});
-builder.Services.AddControllersWithViews()
+    {
+        options.Conventions.Add(new RouteTokenTransformerConvention(
+                 new SlugifyParameterTransformer()));
+    })
     .AddMicrosoftIdentityUI();
 
 builder.Services.AddRazorPages(options =>
